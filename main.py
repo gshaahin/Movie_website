@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, redirect, url_for, request, session
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
@@ -8,24 +7,24 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, FloatField
 from wtforms.validators import DataRequired, NumberRange
 import requests
+import os
 
-MOVIE_DB_API_KEY = "52287599beadbbd97d648a46de36c7eb"
+MOVIE_DB_API_KEY = os.environ.get("MOVIE_DB_API_KEY")
 MOVIE_DB_SEARCH_URL = "https://api.themoviedb.org/3/search/movie"
 MOVIE_DB_INFO_URL = "https://api.themoviedb.org/3/movie"
 MOVIE_DB_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
-MOVIE_DB_AUTHORIZATION_KEY = ("Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MjI4NzU5OWJlYWRiYmQ5N2Q2NDhhNDZkZTM2YzdlYiIsIm5i"
-                              "ZiI6MTczNTY0ODgyNi4wNjMsInN1YiI6IjY3NzNlNjNhM2ZjNzZlYTU4ODkyYTM3NyIsInNjb3BlcyI6WyJhcGlf"
-                              "cmVhZCJdLCJ2ZXJzaW9uIjoxfQ.I18qh69X_CN9I3g7YmjUdJPCPJLGHO7hQuQko4HHESE")
+MOVIE_DB_AUTHORIZATION_KEY = os.environ.get("MOVIE_DB_AUTH_KEY")
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.environ.get("FLASK_KEY")
 Bootstrap5(app)
 
 # CREATE DB
 class Base(DeclarativeBase):
     pass
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///movies.db"
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("MOVIE_DB_URI", "sqlite:///movies.db")
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
@@ -122,4 +121,4 @@ def add_movie():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=False, use_reloader=False)
