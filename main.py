@@ -9,6 +9,7 @@ from wtforms.validators import DataRequired, NumberRange
 import requests
 import os
 
+
 MOVIE_DB_API_KEY = os.environ.get("MOVIE_DB_API_KEY")
 MOVIE_DB_SEARCH_URL = "https://api.themoviedb.org/3/search/movie"
 MOVIE_DB_INFO_URL = "https://api.themoviedb.org/3/movie"
@@ -54,6 +55,7 @@ with app.app_context():
 
 @app.route("/")
 def home():
+    # order movies in the database by rating given
     result = db.session.execute(db.select(Movie).order_by(Movie.rating))
     all_movies = result.scalars().all()
     for i in range(len(all_movies)):
@@ -61,6 +63,7 @@ def home():
     db.session.commit()
     return render_template("index.html", movies_list=all_movies)
 
+# add rating and review to the chosen movie
 @app.route("/edit", methods=["POST","GET"])
 def rate_movie():
     form = MovieForm()
@@ -73,6 +76,7 @@ def rate_movie():
         return redirect(url_for('home'))
     return render_template("edit.html", movie=movie, form=form)
 
+
 @app.route("/delete")
 def delete():
     movie_id = request.args.get('id')
@@ -81,6 +85,7 @@ def delete():
     db.session.commit()
     return redirect(url_for('home'))
 
+# make a list of movies in the search result to choose from
 @app.route("/select")
 def find_movie():
     movie_api_id = request.args.get("id")
@@ -100,6 +105,7 @@ def find_movie():
         return redirect(url_for("rate_movie", id=new_movie.id))
 
 
+#search for a movie by its title
 @app.route("/add", methods=["POST", "GET"])
 def add_movie():
     form = AddMovieForm()
